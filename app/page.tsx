@@ -3,11 +3,14 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 type Transaction = {
   id: string
   type: string
   amount: number
+  member: string
+  currency: string
 }
 
 type Profile = {
@@ -19,6 +22,7 @@ export default function HomePage() {
   const router = useRouter()
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [monthlyBudget, setMonthlyBudget] = useState(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -41,9 +45,23 @@ export default function HomePage() {
         setProfile(profileData)
       }
 
+      // Pick the correct budget row depending on who's logged in
+      const budgetKey =
+        profileData?.role === 'Father' ? 'father_drinks' : 'shared_monthly'
+
+      const { data: budgetData } = await supabase
+        .from('budgets')
+        .select('amount')
+        .eq('key', budgetKey)
+        .single()
+
+      if (budgetData) {
+        setMonthlyBudget(Number(budgetData.amount))
+      }
+
       const { data: txData, error } = await supabase
         .from('transactions')
-        .select('id, type, amount')
+        .select('id, type, amount, member, currency')
 
       if (!error && txData) {
         setTransactions(txData)
@@ -76,50 +94,107 @@ export default function HomePage() {
     router.refresh()
   }
 
-  const remainingBalance = transactions.reduce((total, t) => {
+  if (loading || !profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors">
+        <p className="text-gray-400">Loading...</p>
+      </div>
+    )
+  }
+
+  const isFather = profile.role === 'Father'
+
+  const relevantTransactions = isFather
+    ? transactions.filter((t) => t.member === 'Father')
+    : transactions.filter((t) => t.member !== 'Father')
+
+  // New logic: start from the Monthly Budget, subtract expenses, add back income/returns
+  const netChange = relevantTransactions.reduce((total, t) => {
     if (t.type === 'Income') return total + Number(t.amount)
     if (t.type === 'Expense') return total - Number(t.amount)
     return total
   }, 0)
 
-  if (loading) {
-    return <div className="p-8">Loading...</div>
-  }
+  const remainingBalance = monthlyBudget + netChange
+
+  const currencyLabel = isFather ? 'THB' : 'LKR'
+  const budgetLabel = isFather ? "Father's Drink Budget" : 'Monthly Budget'
+  const balanceLabel = isFather ? 'Remaining (Drinks)' : 'Remaining Balance'
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">
-          {profile?.display_name}'s Page
-        </h1>
-        <button
-          onClick={handleLogout}
-          className="bg-gray-200 px-4 py-2 rounded-lg font-medium hover:bg-gray-300"
-        >
-          Logout
-        </button>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+      {/* Top bar */}
+      <div className="bg-blue-600 dark:bg-blue-800 text-white px-5 pt-6 pb-16 rounded-b-3xl shadow-md transition-colors">
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-blue-100 text-sm">Welcome back</p>
+            <h1 className="text-xl font-bold">{profile.display_name}&apos;s Page</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={handleLogout}
+              className="bg-white/20 text-white text-sm px-3 py-1.5 rounded-full font-medium hover:bg-white/30 transition"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6 max-w-sm mb-6">
-        <p className="text-gray-500 text-sm">Remaining Balance</p>
-        <p className="text-3xl font-bold text-green-600">
-          LKR {remainingBalance.toLocaleString()}
-        </p>
-      </div>
+      {/* Content area, pulled up to overlap the top bar */}
+      <div className="px-5 -mt-10 pb-8 max-w-md mx-auto">
+        {/* Budget + Balance cards, side by side */}
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 transition-colors">
+            <p className="text-gray-400 dark:text-gray-500 text-xs font-medium">
+              {budgetLabel}
+            </p>
+            <p className="text-xl font-bold text-gray-700 dark:text-gray-200 mt-1">
+              {currencyLabel} {monthlyBudget.toLocaleString()}
+            </p>
+          </div>
 
-      <div className="flex gap-3">
-        
-        <a  href="/transactions/new"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium"
-        >
-          New Transaction
-        </a>
-        
-        <a  href="/history"
-          className="bg-gray-600 text-white px-4 py-2 rounded-lg font-medium"
-        >
-          History
-        </a>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 transition-colors">
+            <p className="text-gray-400 dark:text-gray-500 text-xs font-medium">
+              {balanceLabel}
+            </p>
+            <p
+              className={`text-xl font-bold mt-1 ${
+                remainingBalance < 0
+                  ? 'text-red-600 dark:text-red-400'
+                  : 'text-blue-600 dark:text-blue-400'
+              }`}
+            >
+              {currencyLabel} {remainingBalance.toLocaleString()}
+            </p>
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="grid grid-cols-2 gap-3">
+          
+          <a  href="/transactions/new"
+            className="bg-blue-600 text-white rounded-xl py-4 px-4 font-semibold text-center shadow hover:bg-blue-700 transition"
+          >
+            + New Transaction
+          </a>
+          
+          <a  href="/history"
+            className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-gray-700 rounded-xl py-4 px-4 font-semibold text-center shadow-sm hover:bg-blue-50 dark:hover:bg-gray-700 transition"
+          >
+            History
+          </a>
+        </div>
+
+        {profile.role === 'Admin' && (
+          
+          <a  href="/admin"
+            className="block mt-3 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-gray-700 rounded-xl py-4 px-4 font-semibold text-center shadow-sm hover:bg-blue-50 dark:hover:bg-gray-700 transition"
+          >
+            Admin Panel
+          </a>
+        )}
       </div>
     </div>
   )

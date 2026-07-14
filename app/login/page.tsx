@@ -35,42 +35,56 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-5">
       <form
         onSubmit={handleLogin}
-        className="bg-white p-8 rounded-lg shadow max-w-sm w-full space-y-4"
+        className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full space-y-5"
       >
-        <h1 className="text-2xl font-bold text-center mb-2">
-          Family Money Management
-        </h1>
+        <div className="text-center mb-2">
+          <div className="w-14 h-14 bg-blue-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+            <span className="text-white text-2xl font-bold">₨</span>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-800">
+            Family Money Management
+          </h1>
+          <p className="text-gray-400 text-sm mt-1">
+            Log in to view your dashboard
+          </p>
+        </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Email
+          </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border rounded-lg p-2"
+            className="w-full border border-gray-200 rounded-xl p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="you@familyapp.com"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Password</label>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Password
+          </label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border rounded-lg p-2"
+            className="w-full border border-gray-200 rounded-xl p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}
+        {errorMsg && (
+          <p className="text-red-600 text-sm font-medium">{errorMsg}</p>
+        )}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold disabled:opacity-50"
+          className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold shadow hover:bg-blue-700 transition disabled:opacity-50"
         >
           {loading ? 'Logging in...' : 'Log In'}
         </button>
