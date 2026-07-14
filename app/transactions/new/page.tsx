@@ -14,6 +14,7 @@ const ALL_CATEGORIES = [
   'Travel',
   'For Drinks',
   'Petrol',
+  'Earns',
   'Other',
 ]
 

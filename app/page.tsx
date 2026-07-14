@@ -144,53 +144,50 @@ export default function HomePage() {
 
       {/* Content area, pulled up to overlap the top bar */}
       <div className="px-5 -mt-10 pb-8 max-w-md mx-auto">
-        {/* Budget + Balance cards, side by side */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 transition-colors">
-            <p className="text-gray-400 dark:text-gray-500 text-xs font-medium">
-              {budgetLabel}
-            </p>
-            <p className="text-xl font-bold text-gray-700 dark:text-gray-200 mt-1">
-              {currencyLabel} {monthlyBudget.toLocaleString()}
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 transition-colors">
-            <p className="text-gray-400 dark:text-gray-500 text-xs font-medium">
-              {balanceLabel}
-            </p>
-            <p
-              className={`text-xl font-bold mt-1 ${
-                remainingBalance < 0
-                  ? 'text-red-600 dark:text-red-400'
-                  : 'text-blue-600 dark:text-blue-400'
-              }`}
-            >
-              {currencyLabel} {remainingBalance.toLocaleString()}
-            </p>
-          </div>
+        {/* Budget + Balance cards, stacked, matching Admin Panel button style */}
+        <div className="bg-white dark:bg-gray-800 border border-blue-200 dark:border-gray-700 rounded-xl py-5 px-4 text-center shadow-sm mb-3 transition-colors">
+          <p className="text-gray-400 dark:text-gray-500 text-xs font-semibold">
+            {budgetLabel}
+          </p>
+          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
+            {currencyLabel} {monthlyBudget.toLocaleString()}
+          </p>
         </div>
 
-        {/* Action buttons */}
-        <div className="grid grid-cols-2 gap-3">
-          
-          <a  href="/transactions/new"
-            className="bg-blue-600 text-white rounded-xl py-4 px-4 font-semibold text-center shadow hover:bg-blue-700 transition"
+        <div className="bg-white dark:bg-gray-800 border border-blue-200 dark:border-gray-700 rounded-xl py-5 px-4 text-center shadow-sm mb-6 transition-colors">
+          <p className="text-gray-400 dark:text-gray-500 text-xs font-semibold">
+            {balanceLabel}
+          </p>
+          <p
+            className={`text-2xl font-bold mt-1 ${
+              remainingBalance < 0
+                ? 'text-red-600 dark:text-red-400'
+                : 'text-blue-600 dark:text-blue-400'
+            }`}
           >
-            + New Transaction
-          </a>
-          
-          <a  href="/history"
-            className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-gray-700 rounded-xl py-4 px-4 font-semibold text-center shadow-sm hover:bg-blue-50 dark:hover:bg-gray-700 transition"
-          >
-            History
-          </a>
+            {currencyLabel} {remainingBalance.toLocaleString()}
+          </p>
         </div>
+
+        {/* Action buttons — all full width, uniform style */}
+        
+        <a  href="/transactions/new"
+          className="block bg-blue-600 text-white rounded-xl py-4 px-4 font-semibold text-center text-lg shadow hover:bg-blue-700 transition mb-3"
+        >
+          + New Transaction
+        </a>
+
+        
+        <a  href="/history"
+          className="block bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-gray-700 rounded-xl py-4 px-4 font-semibold text-center text-lg shadow-sm hover:bg-blue-50 dark:hover:bg-gray-700 transition mb-3"
+        >
+          History
+        </a>
 
         {profile.role === 'Admin' && (
           
           <a  href="/admin"
-            className="block mt-3 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-gray-700 rounded-xl py-4 px-4 font-semibold text-center shadow-sm hover:bg-blue-50 dark:hover:bg-gray-700 transition"
+            className="block bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-gray-700 rounded-xl py-4 px-4 font-semibold text-center text-lg shadow-sm hover:bg-blue-50 dark:hover:bg-gray-700 transition"
           >
             Admin Panel
           </a>
