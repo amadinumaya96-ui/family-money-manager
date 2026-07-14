@@ -140,24 +140,26 @@ export default function NewTransactionPage() {
             <button
               type="button"
               onClick={() => setType('Expense')}
-              className={`flex-1 py-2.5 rounded-xl font-semibold transition ${
+              className={`flex-1 py-3 rounded-xl font-semibold transition flex items-center justify-center gap-2 ${
                 type === 'Expense'
                   ? 'bg-red-500 text-white shadow'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300'
               }`}
             >
-              Expense
+              <span className="text-2xl leading-none">−</span>
+              
             </button>
             <button
               type="button"
               onClick={() => setType('Income')}
-              className={`flex-1 py-2.5 rounded-xl font-semibold transition ${
+              className={`flex-1 py-3 rounded-xl font-semibold transition flex items-center justify-center gap-2 ${
                 type === 'Income'
                   ? 'bg-green-500 text-white shadow'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300'
               }`}
             >
-              Income / Return
+              <span className="text-2xl leading-none">+</span>
+              
             </button>
           </div>
 

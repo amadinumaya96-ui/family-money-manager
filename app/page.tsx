@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { Logo } from '@/components/logo'
 
 type Transaction = {
   id: string
@@ -126,9 +127,12 @@ export default function HomePage() {
       {/* Top bar */}
       <div className="bg-blue-600 dark:bg-blue-800 text-white px-5 pt-6 pb-16 rounded-b-3xl shadow-md transition-colors">
         <div className="flex justify-between items-center">
-          <div>
-            <p className="text-blue-100 text-sm">Welcome back</p>
-            <h1 className="text-xl font-bold">{profile.display_name}&apos;s Page</h1>
+          <div className="flex items-center gap-3">
+            <Logo className="w-9 h-9 text-white shrink-0" />
+            <div>
+              <p className="text-blue-100 text-sm">Welcome back</p>
+              <h1 className="text-xl font-bold">{profile.display_name}&apos;s Page</h1>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />

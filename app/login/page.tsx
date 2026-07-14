@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { Logo } from '@/components/logo'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -42,10 +43,10 @@ export default function LoginPage() {
       >
         <div className="text-center mb-2">
           <div className="w-14 h-14 bg-blue-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-            <span className="text-white text-2xl font-bold">₨</span>
+            <Logo className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-gray-800">
-            Family Money Management
+            Family Money Balance
           </h1>
           <p className="text-gray-400 text-sm mt-1">
             Log in to view your dashboard
