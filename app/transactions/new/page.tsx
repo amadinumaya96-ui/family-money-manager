@@ -4,21 +4,11 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-const ALL_CATEGORIES = [
-  'Groceries',
-  'Salary for workers',
-  'Junk food',
-  'Electricity bill',
-  'Water bill',
-  'Internet bill',
-  'Travel',
-  'For Drinks',
-  'Petrol',
-  'Earns',
-  'Other',
-]
-
-const FATHER_CATEGORIES = ['For Drinks']
+type Category = {
+  id: string
+  name: string
+  father_only: boolean
+}
 
 export default function NewTransactionPage() {
   const router = useRouter()
@@ -28,12 +18,13 @@ export default function NewTransactionPage() {
   const [date, setDate] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('')
+  const [availableCategories, setAvailableCategories] = useState<Category[]>([])
   const [saving, setSaving] = useState(false)
   const [loading, setLoading] = useState(true)
   const [errorMsg, setErrorMsg] = useState('')
 
   useEffect(() => {
-    async function fetchRole() {
+    async function fetchInitialData() {
       const supabase = createClient()
       const {
         data: { user },
@@ -50,14 +41,27 @@ export default function NewTransactionPage() {
       const userRole = profileData?.role || null
       setRole(userRole)
 
-      const availableCategories =
-        userRole === 'Father' ? FATHER_CATEGORIES : ALL_CATEGORIES
-      setCategory(availableCategories[0])
+      const { data: categoryData } = await supabase
+        .from('categories')
+        .select('id, name, father_only')
+        .order('name', { ascending: true })
+
+      const allCategories = categoryData || []
+
+      const filtered =
+        userRole === 'Father'
+          ? allCategories.filter((c) => c.father_only)
+          : allCategories.filter((c) => !c.father_only)
+
+      setAvailableCategories(filtered)
+      if (filtered.length > 0) {
+        setCategory(filtered[0].name)
+      }
 
       setLoading(false)
     }
 
-    fetchRole()
+    fetchInitialData()
   }, [])
 
   async function handleSubmit(e: React.FormEvent) {
@@ -113,14 +117,11 @@ export default function NewTransactionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors">
         <p className="text-gray-400">Loading...</p>
       </div>
     )
   }
-
-  const availableCategories =
-    role === 'Father' ? FATHER_CATEGORIES : ALL_CATEGORIES
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
@@ -135,7 +136,7 @@ export default function NewTransactionPage() {
       </div>
 
       <div className="px-5 -mt-4 pb-8 max-w-md mx-auto">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transition-colors">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
           <div className="flex gap-3 mb-6">
             <button
               type="button"
@@ -147,7 +148,7 @@ export default function NewTransactionPage() {
               }`}
             >
               <span className="text-2xl leading-none">−</span>
-              
+              Expense
             </button>
             <button
               type="button"
@@ -159,7 +160,7 @@ export default function NewTransactionPage() {
               }`}
             >
               <span className="text-2xl leading-none">+</span>
-              
+              Income / Return
             </button>
           </div>
 
@@ -172,7 +173,7 @@ export default function NewTransactionPage() {
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full border border-gray-200 dark:border-gray-600 rounded-xl p-3 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"  
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-xl p-3 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="0.00"
               />
             </div>
@@ -212,8 +213,8 @@ export default function NewTransactionPage() {
                 className="w-full border border-gray-200 dark:border-gray-600 rounded-xl p-3 text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {availableCategories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
+                  <option key={cat.id} value={cat.name}>
+                    {cat.name}
                   </option>
                 ))}
               </select>

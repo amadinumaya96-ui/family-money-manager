@@ -25,14 +25,14 @@ export function Logo({ className = 'w-8 h-8' }: { className?: string }) {
       {/* --- MONEY SECTION (Bottom) --- */}
       {/* Left Side Coin */}
       <circle cx="14" cy="31" r="4.5" fill="currentColor" opacity="0.4" />
-      
+
       {/* Right Side Coin */}
       <circle cx="26" cy="31" r="4.5" fill="currentColor" opacity="0.4" />
-      
+
       {/* Center Main Coin */}
       <circle cx="20" cy="31" r="5.5" fill="currentColor" />
       {/* Shiny star/inner accent inside the main coin */}
       <circle cx="20" cy="31" r="3" stroke="white" strokeWidth="1" fill="none" opacity="0.7" />
     </svg>
-  );
+  )
 }
