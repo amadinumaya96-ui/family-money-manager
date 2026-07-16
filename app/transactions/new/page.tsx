@@ -148,7 +148,7 @@ export default function NewTransactionPage() {
               }`}
             >
               <span className="text-2xl leading-none">−</span>
-              Expense
+              
             </button>
             <button
               type="button"
@@ -160,7 +160,7 @@ export default function NewTransactionPage() {
               }`}
             >
               <span className="text-2xl leading-none">+</span>
-              Income / Return
+              
             </button>
           </div>
 
