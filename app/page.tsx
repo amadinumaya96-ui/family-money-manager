@@ -119,7 +119,7 @@ export default function HomePage() {
   const remainingBalance = monthlyBudget + netChange
 
   const currencyLabel = isFather ? 'THB' : 'LKR'
-  const budgetLabel = isFather ? "Father's Drink Budget" : 'Monthly Budget'
+  const budgetLabel = isFather ? "Father's Monthly Budget" : 'Monthly Budget'
   const balanceLabel = isFather ? 'Remaining (Drinks)' : 'Remaining Balance'
 
   return (
