@@ -120,7 +120,7 @@ export default function HomePage() {
 
   const currencyLabel = isFather ? 'THB' : 'LKR'
   const budgetLabel = isFather ? "Father's Monthly Budget" : 'Monthly Budget'
-  const balanceLabel = isFather ? 'Remaining (Drinks)' : 'Remaining Balance'
+  const balanceLabel = isFather ? 'Remaining Balance' : 'Remaining Balance'
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
